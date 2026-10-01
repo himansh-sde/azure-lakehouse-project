@@ -1,0 +1,20 @@
+[
+  {
+    "source_schema": "SalesLT",
+    "source_table": "Customer",
+    "sink_container": "bronze",
+    "sink_folder": "saleslt/customer"
+  },
+  {
+    "source_schema": "SalesLT",
+    "source_table": "Product",
+    "sink_container": "bronze",
+    "sink_folder": "saleslt/product"
+  },
+  {
+    "source_schema": "SalesLT",
+    "source_table": "SalesOrderHeader",
+    "sink_container": "bronze",
+    "sink_folder": "saleslt/salesorderheader"
+  }
+]
