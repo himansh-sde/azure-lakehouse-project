@@ -1,3 +1,5 @@
+# Databricks notebook source
+# Databricks notebook source
 # databricks/03_gold/01_customer_analytics.py
 
 from pyspark.sql.functions import col, count, when

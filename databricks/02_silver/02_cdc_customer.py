@@ -1,3 +1,5 @@
+# Databricks notebook source
+# Databricks notebook source
 # databricks/02_silver/02_cdc_customer.py
 
 from delta.tables import DeltaTable
