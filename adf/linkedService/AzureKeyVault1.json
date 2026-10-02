@@ -1,0 +1,10 @@
+{
+	"name": "AzureKeyVault1",
+	"properties": {
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://kv-lakehouse-dev27.vault.azure.net/"
+		}
+	}
+}
