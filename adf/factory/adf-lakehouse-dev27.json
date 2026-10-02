@@ -1,0 +1,10 @@
+{
+	"name": "adf-lakehouse-dev27",
+	"properties": {
+		"trustModeClaimForMi": {
+			"value": "Disabled",
+			"editable": true
+		}
+	},
+	"location": "centralindia"
+}
