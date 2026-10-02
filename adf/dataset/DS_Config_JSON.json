@@ -1,0 +1,35 @@
+{
+	"name": "DS_Config_JSON",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "ingestion_list.json",
+				"fileSystem": "config"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"source_schema": {
+					"type": "string"
+				},
+				"source_table": {
+					"type": "string"
+				},
+				"sink_container": {
+					"type": "string"
+				},
+				"sink_folder": {
+					"type": "string"
+				}
+			}
+		}
+	}
+}
