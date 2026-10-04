@@ -116,7 +116,7 @@ The cloud infrastructure is defined declaratively using Terraform:
 ## 🏗 1. Architecture Overview
 Before writing any code, it is critical to understand the data flow. Data moves from the source system, gets orchestrated by Azure Data Factory, processed by Databricks, and stored securely in Azure Data Lake Storage.
 
-![Architecture Diagram](assets/assets/Azure_Medallion_Lakehouse_Project.drawio.png)
+![Architecture Diagram](assets/Azure_Medallion_Lakehouse_Project.drawio.png)
 
 ## 🗄️ 2. The Data Source
 Every pipeline starts with data. For this project, we extract raw data from an **Azure SQL Database** containing sample relational data (like customers and products).
