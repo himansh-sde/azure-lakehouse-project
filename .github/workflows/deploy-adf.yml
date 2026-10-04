@@ -1,6 +1,7 @@
 name: Deploy ADF to Production
 
 on:
+  workflow_dispatch:  # This creates a manual "Run workflow" button
   push:
     branches:
       - adf_publish
