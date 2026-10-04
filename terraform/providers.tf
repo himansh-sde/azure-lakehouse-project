@@ -9,7 +9,7 @@ terraform {
 
   backend "azurerm" {
     resource_group_name  = "rg-terraform-state"
-    storage_account_name = "sttfstateprod0987"   # Use the exact name you used in Step 1
+    storage_account_name = "sttfstateprod0987" # Use the exact name you used in Step 1
     container_name       = "tfstate"
     key                  = "lakehouse.prod.tfstate"
   }
