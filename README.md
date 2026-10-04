@@ -1,4 +1,4 @@
-# Azure Medallion Lakehouse
+# Azure Medallion Lakehouse Project
 
 # Enterprise Azure Data Lakehouse Platform (Medallion Architecture)
 
@@ -112,32 +112,77 @@ The cloud infrastructure is defined declaratively using Terraform:
 * [Terraform CLI](https://developer.hashicorp.com/terraform/install) (v1.5+)
 * Python 3.10+ & PySpark
 
-### 1. Infrastructure Deployment
-```bash
-cd infrastructure
-terraform init
-terraform plan
-terraform apply
-```
 
-### 2. Service Principal & Secrets Setup
-Assign the Service Principal role to the Data Lake:
-```bash
-az role assignment create \
-  --role "Storage Blob Data Contributor" \
-  --assignee <SERVICE_PRINCIPAL_CLIENT_ID> \
-  --scope "/subscriptions/<SUBSCRIPTION_ID>/resourceGroups/rg-lakehouse-dev/providers/Microsoft.Storage/storageAccounts/stalakehousedev"
-```
+## 🏗 1. Architecture Overview
+Before writing any code, it is critical to understand the data flow. Data moves from the source system, gets orchestrated by Azure Data Factory, processed by Databricks, and stored securely in Azure Data Lake Storage.
 
-Save secrets in Azure Key Vault:
-```bash
-az keyvault secret set --vault-name kv-lakehouse-dev --name "sp-client-id" --value "<CLIENT_ID>"
-az keyvault secret set --vault-name kv-lakehouse-dev --name "sp-client-secret" --value "<CLIENT_SECRET>"
-az keyvault secret set --vault-name kv-lakehouse-dev --name "sp-tenant-id" --value "<TENANT_ID>"
-```
+![Architecture Diagram](assets/Azure_Medallion_Lakehouse_Project.drawio.png)
 
-### 3. Pipeline Execution
-1. Link Azure Data Factory to this repository under the `adf/` directory.
-2. Trigger the master pipeline `pipeline_master_orchestrator` to ingest Bronze sources.
-3. Databricks Workflows execute the Silver cleansing jobs and Gold aggregations.
-4. Run `synapse/serverless_views.sql` to expose views to downstream BI platforms.
+## 🗄️ 2. The Data Source
+Every pipeline starts with data. For this project, we extract raw data from an **Azure SQL Database** containing sample relational data (like customers and products).
+
+![Azure SQL Database](assets/Az_sql_database_source_db.png)
+
+## 🛠️ 3. Infrastructure as Code (Terraform)
+Instead of clicking through the Azure portal to create resources manually, we use Terraform to deploy everything automatically. This ensures our environments are identical and error-free.
+
+To prevent two engineers from overwriting changes at the same time, we store a "state lock" file centrally in a dedicated Resource Group and Storage Container.
+
+![Terraform State Resource Group](assets/Terraform_state_RG.png)
+![Terraform State Container](assets/sttfstateprod0987_container.png)
+
+This Terraform code provisions distinct environments, ensuring our Development resources never interfere with our Production resources. 
+
+![Development Resource Group](assets/lakehouse_project_resourcegroup_dev.png)
+![Production Resource Group](assets/lakehouse_project_resourcegroup_prod.png)
+
+It also provisions a managed resource group dedicated entirely to handling Databricks compute and networking.
+
+![Databricks Managed Resources](assets/databricks_lakehouse_project_resource.png)
+
+## 🔒 4. Security & Secrets Management
+Hardcoding passwords is a major security risk. All database passwords and service principal tokens are securely locked inside **Azure Key Vault**.
+
+![Azure Key Vault](assets/keyVault_lakehouse_Secrets.png)
+
+To deploy our infrastructure automatically, we securely store the necessary Azure authentication credentials inside **GitHub Actions Secrets**.
+
+![GitHub Actions Secrets](assets/Github_Actions_secrets_and_variables.png)
+
+## 🚀 5. Automated CI/CD Deployments
+We use GitHub Actions to automate our deployments so human error is eliminated. 
+
+First, our infrastructure pipeline automatically provisions the Azure resources using Terraform.
+
+![Deploy Infrastructure Action](assets/Github_Deploy_Lakehouse_Infra_Prod.png)
+
+Once the infrastructure is ready, a second pipeline deploys our Azure Data Factory (ADF) orchestration logic directly into the Production environment.
+
+![Deploy ADF Action](assets/Github_Deploy_ADF_Prod.png)
+
+## ⚙️ 6. Data Orchestration
+Azure Data Factory is the conductor of our orchestra. This master pipeline loops through our source tables, copies the raw data, and triggers the Databricks notebooks to run the transformations.
+
+![ADF Master Pipeline](assets/ADF_Pipeline_Complete.png)
+
+## 📂 7. The Medallion Data Lake
+Our Data Lake is neatly organized into distinct containers representing the different stages of data refinement.
+
+![ADLS Containers](assets/stalakehousedev_containers.png)
+
+* **Bronze (Raw):** The exact, unchanged data pulled directly from the SQL database.
+  ![Bronze Container](assets/stalakehousedev_containers_bronze.png)
+
+* **Silver (Cleansed):** Data processed by Databricks into Delta Lake format, where duplicates are removed and changes are tracked over time.
+  ![Silver Container](assets/stalakehousedev_containers_silver.png)
+
+* **Gold (Curated):** Highly optimized, aggregated data ready for business analysts to build dashboards.
+  ![Gold Container](assets/stalakehousedev_containers_gold.png)
+
+## 📊 8. Data Analytics & Serving
+Finally, analysts need to query the Gold data. Instead of building a complex database, we use **Azure Synapse Analytics** serverless SQL pools. This allows users to run standard SQL queries directly against the files sitting in the Data Lake.
+
+![Synapse Analytics Query](assets/Synapse_analytics_sql_query.png)
+
+
+
