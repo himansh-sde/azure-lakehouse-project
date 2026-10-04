@@ -31,7 +31,7 @@ resource "azurerm_storage_account" "datalake" {
 
 # 3. Medallion Containers
 resource "azurerm_storage_data_lake_gen2_filesystem" "containers" {
-  for_each           = toset(["bronze", "silver", "gold"])
+  for_each           = toset(["bronze", "silver", "gold", "config"])
   name               = each.key
   storage_account_id = azurerm_storage_account.datalake.id
 }
