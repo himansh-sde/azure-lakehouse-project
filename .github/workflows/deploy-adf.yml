@@ -1,0 +1,37 @@
+name: Deploy ADF to Production
+
+on:
+  push:
+    branches:
+      - adf_publish
+
+jobs:
+  deploy-adf:
+    name: Deploy ADF ARM Templates
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout adf_publish Branch
+        uses: actions/checkout@v4
+        with:
+          ref: adf_publish
+
+      - name: Log in to Azure
+        uses: azure/login@v2
+        with:
+          creds: >-
+            {
+              "clientId": "${{ secrets.ARM_CLIENT_ID }}",
+              "clientSecret": "${{ secrets.ARM_CLIENT_SECRET }}",
+              "subscriptionId": "${{ secrets.ARM_SUBSCRIPTION_ID }}",
+              "tenantId": "${{ secrets.ARM_TENANT_ID }}"
+            }
+
+      - name: Deploy ARM Template to Production ADF
+        uses: azure/arm-deploy@v2
+        with:
+          subscriptionId: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+          resourceGroupName: rg-lakehouse-prod
+          template: ./adf-lakehouse-dev27/ARMTemplateForFactory.json
+          parameters: >-
+            ./adf-lakehouse-dev27/ARMTemplateParametersForFactory.json
+            factoryName=adf-lakehouse-prod-0987
