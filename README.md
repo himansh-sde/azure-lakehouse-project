@@ -184,5 +184,3 @@ Finally, analysts need to query the Gold data. Instead of building a complex dat
 
 ![Synapse Analytics Query](assets/Synapse_analytics_sql_query.png)
 
-
-
