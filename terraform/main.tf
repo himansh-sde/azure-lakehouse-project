@@ -46,3 +46,4 @@ resource "azurerm_data_factory" "adf" {
     type = "SystemAssigned"
   }
 }
+
